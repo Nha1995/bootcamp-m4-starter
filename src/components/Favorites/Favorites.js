@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./Favorites.css";
 import store from "../../redux/store";
+import { Link } from 'react-router-dom';
 
 class Favorites extends Component {
   state = {
@@ -30,11 +31,23 @@ class Favorites extends Component {
     })
   }
 
+  saveCartHandler = () => {
+    this.setState({ 
+      isTitle:!this.state.isTitle
+    })
+    store.dispatch({
+      type:"Название списка",
+      payload:{
+        title: this.state.title
+      }
+    })
+  }
+
   render() {
-    console.log(this.state.movies);
     return (
       <div className="favorites">
         <input
+        disabled = {this.state.isTitle}
           value={this.state.title}
           onChange={(e) => this.changeTitleHandler(e)}
           className="favorites__name"
@@ -52,9 +65,11 @@ class Favorites extends Component {
           )}
         </ul>
 
-        <button type="button" className="favorites__save">
+        {this.state.isTitle ? <Link to={'/list/:'+this.state.title.replace(/\s/g, '')} target="_blank" rel="noopener noreferrer">Ссылка на список</Link> : <button onClick={() => this.saveCartHandler()} type="button" className="favorites__save">
           Сохранить список
-        </button>
+        </button>}
+        
+
       </div>
     );
   }

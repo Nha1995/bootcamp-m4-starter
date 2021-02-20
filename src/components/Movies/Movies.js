@@ -33,7 +33,6 @@ class Movies extends Component {
     }
 
     render() { 
-        console.log(store.getState())
         return ( 
             <ul className="movies">
                 {this.state.movies  ? this.state.movies.map((movie) => (
