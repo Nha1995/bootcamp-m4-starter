@@ -2,7 +2,7 @@ const initialState = {
   searchResult: "",
   cart: [],
   movies: [],
-  cartTitle:'Новый список'
+  getIdForQuery:'',
 };
 
 function reducer(state = initialState, action) {
@@ -12,7 +12,7 @@ function reducer(state = initialState, action) {
         searchResult: action.payload.title,
         cart: state.cart,
         movies:state.movies,
-        cartTitle:state.cartTitle,
+        getIdForQuery:state.cartTitle,
       };
     }
     case "Добавить фильм в корзину": {
@@ -25,7 +25,7 @@ function reducer(state = initialState, action) {
         searchResult: state.searchResult,
         cart: [...state.cart, action.payload.movie],
         movies:state.movies,
-        cartTitle:state.cartTitle,
+        getIdForQuery:state.cartTitle,
       };
     }
     case "Удалить элемент из корзины": {
@@ -39,15 +39,15 @@ function reducer(state = initialState, action) {
         searchResult: state.searchResult,
         cart: newCarts,
         movies:state.movies,
-        cartTitle:state.cartTitle,
+        getIdForQuery:state.cartTitle,
       }
     }
-    case "Название списка": {
+    case "Получение идентификатора": {
       return {
         searchResult: state.searchResult,
         cart: state.cart,
         movies:state.movies,
-        cartTitle:action.payload.title,
+        getIdForQuery:action.payload.id,
       }
     }
     default: {

@@ -12,7 +12,6 @@ class MainPage extends Component {
     
 //     store.subscribe(() => {
 //         const state = store.getState();
-//       console.log("Hmmm", state);
 //     });
 //     const res = fetch(`http://www.omdbapi.com/?s=${state.searchResult}${key}`);
 //   }

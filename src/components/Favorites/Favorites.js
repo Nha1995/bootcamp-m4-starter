@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import "./Favorites.css";
 import store from "../../redux/store";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 class Favorites extends Component {
   state = {
     title: "Новый список",
     isTitle: false,
     movies: [],
+    imdbID: [],
+    id:''
   };
 
   changeTitleHandler = (e) => {
@@ -17,37 +19,67 @@ class Favorites extends Component {
   componentDidMount() {
     store.subscribe(() => {
       const state = store.getState();
-      console.log(state);
-      this.setState({ movies: state.cart });
+      let cartArray = [];      
+      if (state.cart.length > 0) {        
+        state.cart.forEach((item) => {
+          cartArray.push(item.imdbID)
+        })
+      }
+        this.setState({
+          imdbID:cartArray,
+          id:state.getIdForQuery,
+          movies: state.cart,
+        },() => console.log("favorites STATE", this.state.id))
+      
     });
   }
 
+  saveCartHandler = () => {
+    
+    this.setState({
+      isTitle: !this.state.isTitle,
+    });    
+    let newCart = {
+      "title": this.state.title,
+      "movies": this.state.imdbID
+  }
+  
+    fetch('https://acb-api.algoritmika.org/api/movies/list', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(newCart)
+    })
+    .then(response => response.json())
+        .then(data =>{
+          store.dispatch({
+            type: "Получение идентификатора",
+            payload: {
+              id:data.id
+            },
+          });
+        })
+  };
+
   removeItemHandler = (id) => {
     store.dispatch({
-      type:"Удалить элемент из корзины",
-      payload:{
-        imdbID:id,
-      }
-    })
-  }
+      type: "Удалить элемент из корзины",
+      payload: {
+        imdbID: id,
+      },
+    });
+  };
 
-  saveCartHandler = () => {
-    this.setState({ 
-      isTitle:!this.state.isTitle
-    })
-    store.dispatch({
-      type:"Название списка",
-      payload:{
-        title: this.state.title
-      }
-    })
-  }
+  
 
   render() {
+    const href = this.state.id;
+    console.log('href',href);
     return (
       <div className="favorites">
         <input
-        disabled = {this.state.isTitle}
+          disabled={this.state.isTitle}
           value={this.state.title}
           onChange={(e) => this.changeTitleHandler(e)}
           className="favorites__name"
@@ -56,8 +88,14 @@ class Favorites extends Component {
         <ul className="favorites__list">
           {this.state.movies ? (
             this.state.movies.map((item) => (
-              <li className="favorites__listItem" key={item.imdbID} >
-                {item.Title} {item.Year} <button onClick={()=>this.removeItemHandler(item.imdbID)} className="favorites__delButton">Удалить</button>
+              <li className="favorites__listItem" key={item.imdbID}>
+                {item.Title} {item.Year}{" "}
+                <button
+                  onClick={() => this.removeItemHandler(item.imdbID)}
+                  className="favorites__delButton"
+                >
+                  Удалить
+                </button>
               </li>
             ))
           ) : (
@@ -65,11 +103,22 @@ class Favorites extends Component {
           )}
         </ul>
 
-        {this.state.isTitle ? <Link to={'/list/:'+this.state.title.replace(/\s/g, '')} target="_blank" rel="noopener noreferrer">Ссылка на список</Link> : <button onClick={() => this.saveCartHandler()} type="button" className="favorites__save">
-          Сохранить список
-        </button>}
-        
-
+        {this.state.isTitle ? (
+          <Link
+            to={`/list/` + href}
+            target="_blank"
+          >
+            Ссылка на список
+          </Link>
+        ) : (
+          <button
+            onClick={() => this.saveCartHandler()}
+            type="button"
+            className="favorites__save"
+          >
+            Сохранить список
+          </button>
+        )}
       </div>
     );
   }

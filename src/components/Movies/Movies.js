@@ -32,7 +32,7 @@ class Movies extends Component {
       })
     }
 
-    render() { 
+    render() {         
         return ( 
             <ul className="movies">
                 {this.state.movies  ? this.state.movies.map((movie) => (
