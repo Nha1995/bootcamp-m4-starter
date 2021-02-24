@@ -2,33 +2,25 @@ const initialState = {
   searchResult: "",
   cart: [],
   movies: [],
-  getIdForQuery:'',
 };
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case "Поиск фильма по названию": {
+    case "SEARCH_MOVIES_BY_TITLE": {
       return {
         searchResult: action.payload.title,
         cart: state.cart,
         movies:state.movies,
-        getIdForQuery:state.cartTitle,
       };
     }
-    case "Добавить фильм в корзину": {
-      for (let i = 0; i < state.cart.length; i++) {
-        if(state.cart[i].imdbID === action.payload.movie.imdbID) {
-          return state;
-        }
-      }
+    case "ADD_MOVIE_TO_CART": {      
       return {
         searchResult: state.searchResult,
         cart: [...state.cart, action.payload.movie],
         movies:state.movies,
-        getIdForQuery:state.cartTitle,
       };
     }
-    case "Удалить элемент из корзины": {
+    case "DELETE_MOVIE_FROM_CART": {
       const newCarts = state.cart.filter((item)=> {
         if(item.imdbID !== action.payload.imdbID) {
           return item;
@@ -39,10 +31,9 @@ function reducer(state = initialState, action) {
         searchResult: state.searchResult,
         cart: newCarts,
         movies:state.movies,
-        getIdForQuery:state.cartTitle,
       }
     }
-    case "Получение идентификатора": {
+    case "GET_ID": {
       return {
         searchResult: state.searchResult,
         cart: state.cart,

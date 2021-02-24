@@ -9,7 +9,7 @@ class Favorites extends Component {
     isTitle: false,
     movies: [],
     imdbID: [],
-    id:''
+    id: "",
   };
 
   changeTitleHandler = (e) => {
@@ -19,63 +19,61 @@ class Favorites extends Component {
   componentDidMount() {
     store.subscribe(() => {
       const state = store.getState();
-      let cartArray = [];      
-      if (state.cart.length > 0) {        
+      let cartArray = [];
+      if (state.cart.length > 0) {
         state.cart.forEach((item) => {
-          cartArray.push(item.imdbID)
-        })
+          cartArray.push(item.imdbID);
+        });
       }
-        this.setState({
-          imdbID:cartArray,
-          id:state.getIdForQuery,
+      this.setState(
+        {
+          imdbID: cartArray,
+          id: state.getIdForQuery,
           movies: state.cart,
-        },() => console.log("favorites STATE", this.state.id))
-      
+        },
+        () => console.log("favorites STATE", this.state.id)
+      );
     });
   }
 
   saveCartHandler = () => {
-    
     this.setState({
       isTitle: !this.state.isTitle,
-    });    
+    });
     let newCart = {
-      "title": this.state.title,
-      "movies": this.state.imdbID
-  }
-  
-    fetch('https://acb-api.algoritmika.org/api/movies/list', {
-      method: 'POST',
+      title: this.state.title,
+      movies: this.state.imdbID,
+    };
+
+    fetch("https://acb-api.algoritmika.org/api/movies/list", {
+      method: "POST",
       headers: {
-        'Content-type': 'application/json'
+        "Content-type": "application/json",
       },
-      body: JSON.stringify(newCart)
+      body: JSON.stringify(newCart),
     })
-    .then(response => response.json())
-        .then(data =>{
-          store.dispatch({
-            type: "Получение идентификатора",
-            payload: {
-              id:data.id
-            },
-          });
-        })
+      .then((response) => response.json())
+      .then((data) => {
+        store.dispatch({
+          type: "GET_ID",
+          payload: {
+            id: data.id,
+          },
+        });
+      });
   };
 
   removeItemHandler = (id) => {
     store.dispatch({
-      type: "Удалить элемент из корзины",
+      type: "DELETE_MOVIE_FROM_CART",
       payload: {
         imdbID: id,
       },
     });
   };
 
-  
-
   render() {
-    const href = this.state.id;
-    console.log('href',href);
+    const id = this.state.id;
     return (
       <div className="favorites">
         <input
@@ -104,10 +102,7 @@ class Favorites extends Component {
         </ul>
 
         {this.state.isTitle ? (
-          <Link
-            to={`/list/` + href}
-            target="_blank"
-          >
+          <Link to={`/list/` + id} target="_blank">
             Ссылка на список
           </Link>
         ) : (

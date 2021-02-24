@@ -4,22 +4,22 @@ import store from "../../redux/store";
 
 class SearchBox extends Component {
   state = {
-    searchLine: "",
+    searchContent: "",
   };
   searchLineChangeHandler = (e) => {
-    this.setState({ searchLine: e.target.value });
+    this.setState({ searchContent: e.target.value });
   };
   searchBoxSubmitHandler = (e) => {
     e.preventDefault();
     store.dispatch({
-      type: "Поиск фильма по названию",
+      type: "SEARCH_MOVIES_BY_TITLE",
       payload: {
-        title: this.state.searchLine,
+        title: this.state.searchContent,
       }
     });
   };
   render() {
-    const { searchLine } = this.state;
+    const { searchContent } = this.state;
 
     return (
       <div className="search-box">
@@ -30,7 +30,7 @@ class SearchBox extends Component {
           <label className="search-box__form-label">
             Искать фильм по названию:
             <input
-              value={searchLine}
+              value={searchContent}
               type="text"
               className="search-box__form-input"
               placeholder="Например, Shawshank Redemption"
@@ -40,7 +40,7 @@ class SearchBox extends Component {
           <button
             type="submit"
             className="search-box__form-submit"
-            disabled={!searchLine}
+            disabled={!searchContent}
           >
             Искать
           </button>

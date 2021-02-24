@@ -1,44 +1,44 @@
 import React, { Component } from "react";
 import "./ListPage.css";
-import store from "../../redux/store";
 import MovieItem from "../../components/MovieItem/MovieItem";
-
 
 class ListPage extends Component {
   state = {
     title: "Новый список",
-    imdbID:[],
+    imdbID: [],
     movies: [],
   };
 
   getMoviesByImdbID = (imdbID) => {
-    imdbID.forEach((id) => {
-      console.log('IDIDID',`http://www.omdbapi.com/?i=${id}&apikey=56e40d17`)
-      fetch(`http://www.omdbapi.com/?i=${id}&apikey=56e40d17`)
-      .then((response) =>response.json())
-      .then((data) =>{
-        console.log(data);
+    imdbID.forEach(async (id) => {
+      try {
+        const response = await fetch(
+          `http://www.omdbapi.com/?i=${id}&apikey=56e40d17`
+        );
+        const data = await response.json();
         this.setState({
-          movies:[...this.state.movies, data]
-        })
-      })
-    })
-  }
-  
-  componentDidMount() { 
+          movies: [...this.state.movies, data],
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  };
+
+  componentDidMount() {
     const id = this.props.match.params.id;
-    console.log('PROPS ID',this.props.match.params)
     fetch(`https://acb-api.algoritmika.org/api/movies/list/${id}`)
-    .then((response) =>response.json())
-    .then((data) => {
-      console.log(data)
-      this.setState({title: data.title,imdbID:data.movies}, () => this.getMoviesByImdbID(this.state.imdbID))
-    })
-    .catch((err) => console.log('BAD URL'))
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ title: data.title, imdbID: data.movies }, () =>
+          this.getMoviesByImdbID(this.state.imdbID)
+        );
+      })
+      .catch((err) => console.log(err));
   }
 
   render() {
-    console.log(this.state.movies)
+    console.log(this.state.movies);
     return (
       <div className="list-page">
         <h1 className="list-page__title">{this.state.title}</h1>
